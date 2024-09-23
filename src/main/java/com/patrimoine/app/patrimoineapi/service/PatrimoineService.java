@@ -27,12 +27,21 @@ public class PatrimoineService {
         return patrimoines.stream()
                 .filter(p -> p.getId() == id)
                 .findFirst()
-                .orElse(new Patrimoine("Null-Name"));
+                .orElse(null);
     }
 
     public Patrimoine crupdate(int id, Patrimoine patrimoine) {
-        patrimoines.removeIf(p -> p.getId() == id);
-        patrimoines.add(patrimoine);
+        if (getById(id) != null) {
+            patrimoines.removeIf(p -> p.getId() == id);
+            patrimoine.setId(id);
+            patrimoine.setDerniereModification();
+            patrimoines.add(patrimoine);
+        } else {
+            Patrimoine newPatrimoine = new Patrimoine(patrimoine.getPossesseur());
+            patrimoines.add(newPatrimoine);
+            savePatrimoines();
+            return newPatrimoine;
+        }
         savePatrimoines();
         return patrimoine;
     }
