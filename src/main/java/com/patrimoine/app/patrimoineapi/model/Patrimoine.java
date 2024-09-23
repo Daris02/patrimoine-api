@@ -18,12 +18,10 @@ import java.time.format.DateTimeFormatter;
 @AllArgsConstructor
 public class Patrimoine {
     private int id;
-    private static int idCounter = 0; 
     private String possesseur;
     private String derniereModification;
 
     public Patrimoine(String possesseur) {
-        this.id = ++idCounter; 
         this.possesseur = possesseur;
         this.derniereModification = formatDate(LocalDateTime.now());
     }
@@ -33,7 +31,7 @@ public class Patrimoine {
         return dateTime.format(formatter);
     }
 
-    public void setDerniereModification() {
+    public void updateDernierModification() {
         this.derniereModification = formatDate(LocalDateTime.now());
     }
 }

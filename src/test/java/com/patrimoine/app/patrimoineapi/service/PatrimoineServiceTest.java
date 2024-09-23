@@ -29,7 +29,7 @@ public class PatrimoineServiceTest {
     @Test
     public void testCrupdate() throws IOException {
         Patrimoine patrimoine = new Patrimoine("Owner");
-        PatrimoineService patrimoineService = new PatrimoineService();
+        PatrimoineService patrimoineService = new PatrimoineService("patrimoines-test-crupdate.json");
         patrimoine.setId(1);
 
         doNothing().when(objectMapper).writeValue(any(File.class), any());
@@ -42,11 +42,13 @@ public class PatrimoineServiceTest {
     @Test
     public void testGetByIdFound() throws IOException {
         Patrimoine patrimoine = new Patrimoine("Owner");
-        PatrimoineService patrimoineService = new PatrimoineService();
+        PatrimoineService patrimoineService = new PatrimoineService("patrimoines-test-found.json");
         patrimoine.setId(1);
 
         when(objectMapper.readValue(any(byte[].class), eq(Patrimoine[].class)))
                 .thenReturn(new Patrimoine[] { patrimoine });
+        
+        patrimoineService.crupdate(1, patrimoine);
 
         Patrimoine result = patrimoineService.getById(1);
 
@@ -54,13 +56,29 @@ public class PatrimoineServiceTest {
     }
 
     @Test
+    public void testCrupdateRemovesOldPatrimoine() {
+        PatrimoineService patrimoineService = new PatrimoineService("patrimoines-test-remove-old.json");
+        Patrimoine oldPatrimoine = new Patrimoine("Old Owner");
+        patrimoineService.crupdate(1, oldPatrimoine);
+
+        Patrimoine newPatrimoine = new Patrimoine("New Owner");
+        
+        Patrimoine result = patrimoineService.crupdate(1, newPatrimoine);
+
+        assertEquals(newPatrimoine.getPossesseur(), result.getPossesseur());
+        
+        assertEquals(1, patrimoineService.getAllPatrimoines().size());
+    }
+
+    @Test
     public void testGetByIdNotFound() throws IOException {
-        PatrimoineService patrimoineService = new PatrimoineService();
+        PatrimoineService patrimoineService = new PatrimoineService("patrimoines-test-not-found.json");
+        
         when(objectMapper.readValue(any(byte[].class), eq(Patrimoine[].class)))
                 .thenReturn(new Patrimoine[] {});
 
         Patrimoine result = patrimoineService.getById(1);
 
-        assertEquals("Null-Name", result.getPossesseur());
+        assertEquals(null, result);
     }
 }

@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.patrimoine.app.patrimoineapi.model.Patrimoine;
 import com.patrimoine.app.patrimoineapi.service.PatrimoineService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +15,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @RestController
 @RequestMapping("/patrimoines")
 public class PatrimoineController {
-  private PatrimoineService service = new PatrimoineService();
+  @Autowired
+  private PatrimoineService service;
 
   @GetMapping("/{id}")
   public Patrimoine getPatrimoineById(@PathVariable int id) {
